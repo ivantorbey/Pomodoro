@@ -75,10 +75,11 @@ class PomodoroViewModel(app: Application) : AndroidViewModel(app) {
         ctx.clearSessionState()
     }
 
-    fun toggleCheck(bit: Int) = viewModelScope.launch {
+    /** Coche l'item (set uniquement, jamais unset). */
+    fun checkItem(bit: Int) = viewModelScope.launch {
         ctx.sessionDataStore.edit { prefs ->
             val current = prefs[PrefKeys.CHECKED_MASK] ?: 0
-            prefs[PrefKeys.CHECKED_MASK] = current xor (1 shl bit)
+            prefs[PrefKeys.CHECKED_MASK] = current or (1 shl bit)
         }
     }
 

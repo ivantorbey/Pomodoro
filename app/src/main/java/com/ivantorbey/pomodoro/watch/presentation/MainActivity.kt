@@ -83,7 +83,7 @@ fun PomodoroApp(
                     state = state,
                     isAmbient = isAmbient,
                     onResume = { vm.resumeWork() },
-                    onToggleCheck = { vm.toggleCheck(it) },
+                    onCheckItem = { vm.checkItem(it) },
                     onLongPress = { showStopConfirm = true }
                 )
             }

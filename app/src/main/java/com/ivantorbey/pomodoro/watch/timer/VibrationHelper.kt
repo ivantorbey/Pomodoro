@@ -1,7 +1,6 @@
 package com.ivantorbey.pomodoro.watch.timer
 
 import android.content.Context
-import android.media.AudioManager
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -9,26 +8,21 @@ import android.os.VibratorManager
 
 object VibrationHelper {
 
-    /** court-court-long : début de pause */
+    /** court-court-long : début de pause. */
     private val PATTERN_BREAK_START = longArrayOf(0, 150, 100, 150, 100, 600)
 
-    /** long-long : fin de pause */
+    /** long-long : fin de pause. */
     private val PATTERN_BREAK_DONE = longArrayOf(0, 500, 200, 500)
 
     fun vibrateBreakStart(context: Context) = vibrate(context, PATTERN_BREAK_START)
     fun vibrateBreakDone(context: Context) = vibrate(context, PATTERN_BREAK_DONE)
 
     private fun vibrate(context: Context, pattern: LongArray) {
-        if (!canVibrate(context)) return
         val vibrator = getVibrator(context) ?: return
+        if (!vibrator.hasVibrator()) return
+        // Le système respecte lui-même DND/Coucher selon les attributs audio.
+        // On délègue entièrement : pas de vérification manuelle du ringerMode.
         vibrator.vibrate(VibrationEffect.createWaveform(pattern, -1))
-    }
-
-    /** Respecte Ne pas déranger / mode Coucher : on ne vibre pas si le volume des notifications
-     *  est à zéro (mode silencieux). */
-    private fun canVibrate(context: Context): Boolean {
-        val audio = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        return audio.ringerMode != AudioManager.RINGER_MODE_SILENT
     }
 
     private fun getVibrator(context: Context): Vibrator? =
