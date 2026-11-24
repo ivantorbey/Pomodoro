@@ -3,6 +3,7 @@ package com.ivantorbey.pomodoro.watch.timer
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.PowerManager
 import com.ivantorbey.pomodoro.watch.PomodoroContent
 import com.ivantorbey.pomodoro.watch.data.Phase
 import com.ivantorbey.pomodoro.watch.data.readSessionState
@@ -17,10 +18,18 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != AlarmScheduler.ACTION_PHASE_TRANSITION) return
         val pending = goAsync()
+
+        // WakeLock partiel : empêche le CPU de se rendormir pendant le traitement async
+        // (vibration + écriture DataStore + notification). Max 10 s largement suffisant.
+        val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+        val wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "pomodoro:AlarmReceiver")
+        wl.acquire(10_000L)
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 handleTransition(context)
             } finally {
+                if (wl.isHeld) wl.release()
                 pending.finish()
             }
         }
@@ -37,7 +46,10 @@ class AlarmReceiver : BroadcastReceiver() {
 }
 
 /** Démarre la pause : tirage, persistance, alarme, vibration, notification. */
-suspend fun startBreak(context: Context, currentState: com.ivantorbey.pomodoro.watch.data.SessionState) {
+suspend fun startBreak(
+    context: Context,
+    currentState: com.ivantorbey.pomodoro.watch.data.SessionState,
+) {
     val durationMs = currentState.effectiveBreakDurationMin() * 60_000L
     val endTimeMs = System.currentTimeMillis() + durationMs
     val newState = currentState.copy(
@@ -55,7 +67,10 @@ suspend fun startBreak(context: Context, currentState: com.ivantorbey.pomodoro.w
 }
 
 /** Termine la pause : persistance, vibration, notification. */
-private suspend fun endBreak(context: Context, currentState: com.ivantorbey.pomodoro.watch.data.SessionState) {
+private suspend fun endBreak(
+    context: Context,
+    currentState: com.ivantorbey.pomodoro.watch.data.SessionState,
+) {
     val newState = currentState.copy(phase = Phase.BREAK_DONE)
     context.writeSessionState(newState)
     VibrationHelper.vibrateBreakDone(context)

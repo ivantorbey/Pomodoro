@@ -3,6 +3,7 @@ package com.ivantorbey.pomodoro.watch.timer
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.PowerManager
 import com.ivantorbey.pomodoro.watch.data.Phase
 import com.ivantorbey.pomodoro.watch.data.readSessionState
 import com.ivantorbey.pomodoro.watch.data.writeSessionState
@@ -16,10 +17,14 @@ class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != Intent.ACTION_BOOT_COMPLETED) return
         val pending = goAsync()
+        val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+        val wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "pomodoro:BootReceiver")
+        wl.acquire(15_000L)
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 restoreSession(context)
             } finally {
+                if (wl.isHeld) wl.release()
                 pending.finish()
             }
         }
