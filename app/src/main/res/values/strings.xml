@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Pomodoro</string>
+    <string name="tile_label">Pomodoro</string>
+    <string name="complication_label">Pomodoro</string>
+    <string name="notif_channel_name">Session Pomodoro</string>
+    <string name="notif_title_work">Travail en cours</string>
+    <string name="notif_title_break">Pause</string>
+    <string name="notif_title_break_done">Pause terminée</string>
+    <string name="action_open">Ouvrir</string>
+</resources>

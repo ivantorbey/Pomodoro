@@ -1,0 +1,113 @@
+package com.ivantorbey.pomodoro.watch
+
+/** Listes de contenu affichées pendant la pause. À reprendre mot pour mot. */
+object PomodoroContent {
+
+    val QUESTIONS = listOf(
+        "Friction : qu'est-ce qui m'a ralenti ou distrait ?",
+        "Amélioration : que puis-je changer dans les {N} prochaines minutes ?",
+        "Énergie : mon niveau d'énergie est-il bon, ou est-ce que je force ?",
+        "Plaisir : comment améliorer le plaisir que je prends ?",
+        "Apprentissage : qu'ai-je appris pendant cette session ?",
+        "Mémoire : quelle est la chose la plus importante que j'ai vue ?",
+        "Regard : que puis-je améliorer dans ce que je viens de produire ?",
+        "Contradiction : quel argument va contre ce que je viens de faire ?",
+        "Priorité : suis-je sur la tâche la plus importante ?",
+        "Simplicité : comment faire la même chose avec deux fois moins d'effort ?",
+        "Prochaine étape : quelle est la toute prochaine action concrète ?",
+        "Utilité : qu'est-ce qui aiderait vraiment la personne pour qui je travaille ?",
+        "Fierté : de quoi suis-je satisfait dans cette session ?",
+        "Blocage : sur quoi suis-je bloqué, et qui pourrait m'aider ?",
+        "Délégation : y a-t-il quelque chose que je devrais confier à quelqu'un ?",
+        "Évitement : quelle tâche suis-je en train d'éviter, et pourquoi ?",
+        "Clarté : puis-je expliquer en une phrase ce que je fais ?",
+        "Erreur : quelle erreur ai-je faite, et que m'apprend-elle ?",
+        "Curiosité : quelle question me reste-t-il sur ce sujet ?",
+        "Automatisation : qu'ai-je fait deux fois que je pourrais automatiser ?",
+        "Attentes : ce que je produis correspond-il à ce qu'on attend de moi ?",
+        "Gratitude : qui ou quoi m'a facilité le travail ?",
+        "Recul : dans une semaine, ce que je fais comptera-t-il encore ?",
+        "Environnement : quel petit changement autour de moi m'aiderait à me concentrer ?",
+        "Bilan : si je m'arrêtais maintenant, qu'est-ce qui serait fait ?",
+        "Boussole : est-ce que je vais dans la bonne direction, ou juste vite ?",
+        "Futur moi : qu'est-ce que je me remercierai d'avoir fait aujourd'hui ?",
+        "Essentiel : si je n'avais que 10 minutes, je ferais quoi ?",
+        "Bruit : qu'est-ce qui m'a pris de l'attention sans rien rapporter ?",
+        "Courage : quel message est-ce que je repousse d'envoyer ?",
+        "Élan : qu'est-ce qui m'a donné de l'énergie dans cette session ?",
+        "Assez bien : où est-ce que la perfection me ralentit pour rien ?",
+        "Mentor : que me conseillerait quelqu'un que j'admire ?",
+        "Un mot : quel mot résume cette session ?",
+        "Lâcher prise : qu'est-ce que je peux arrêter de porter ?"
+    )
+
+    val ACTIONS = listOf(
+        "Regarder au loin 20 secondes et cligner des yeux",
+        "Incliner lentement la tête de chaque côté",
+        "Rouler les épaules vers l'arrière 10 fois",
+        "Étirer les poignets et les doigts",
+        "Respirer lentement 5 fois : 4 s inspire, 6 s expire",
+        "Tourner le buste de chaque côté, assis",
+        "Fermer les yeux et écouter les sons autour pendant 1 minute",
+        "Masser les tempes et la mâchoire",
+        "Respiration carrée : 4 s inspire, 4 s pause, 4 s expire, 4 s pause",
+        "Secouer les mains et les bras pendant 15 secondes",
+        "Ouvrir la poitrine : mains jointes dans le dos, bras tendus",
+        "Se redresser et garder une posture droite 30 secondes",
+        "Relâcher la mâchoire et laisser tomber les épaules",
+        "Masser la nuque avec les deux mains",
+        "Étirer les avant-bras, paume vers soi puis vers l'extérieur",
+        "Regarder le plafond puis le sol, lentement, 5 fois",
+        "Respirer 5 fois par le ventre, main posée dessus",
+        "Fermer les yeux 30 secondes sans rien faire",
+        "Noter l'idée qui me trotte dans la tête",
+        "Contracter puis relâcher les jambes 5 fois",
+        "Desserrer les poings et ouvrir grand les mains",
+        "Sourire 10 secondes, même sans raison",
+        "Nommer 3 choses que je vois, 2 que j'entends, 1 que je sens",
+        "Poser les pieds à plat et sentir le sol",
+        "Bâiller volontairement, en grand",
+        "Expirer deux fois plus longtemps qu'inspirer, 3 fois",
+        "Fixer un point au loin, puis le bout de mon doigt, 5 fois"
+    )
+
+    val LEVER = listOf(
+        "Va toucher le premier objet bleu que tu vois à moins de 3 mètres",
+        "Va saluer le collègue le plus éloigné de ton bureau",
+        "Fais 8 × 2 pas : 8 aller, 8 retour",
+        "Va remplir ton verre d'eau au point d'eau le plus éloigné",
+        "Va jeter un papier à la poubelle la plus lointaine",
+        "Va à une fenêtre et compte 5 choses qui bougent dehors",
+        "Va chercher un café en prenant le chemin le plus long",
+        "Va demander à un collègue comment se passe sa journée",
+        "Va lire une affiche ou un panneau dans le couloir",
+        "Monte ou descends un étage, puis reviens",
+        "Trouve un objet rouge, puis un objet vert, et touche-les",
+        "Fais le tour de la pièce sans te presser",
+        "Va aux toilettes les plus éloignées",
+        "Va ranger un objet à sa place, loin de ton bureau",
+        "Va te laver les mains en prenant ton temps",
+        "Va toucher un mur de chaque côté de la pièce",
+        "Va jusqu'à l'imprimante et reviens",
+        "Compte les plantes de la pièce en passant devant chacune",
+        "Va regarder l'heure sur l'horloge la plus proche",
+        "Marche jusqu'à la porte d'entrée et reviens",
+        "Va proposer un café ou un verre d'eau à quelqu'un",
+        "Repère 3 objets ronds en te déplaçant",
+        "Fais 20 pas en les comptant dans ta tête",
+        "Va jeter un œil dans le frigo sans rien prendre",
+        "Va toucher la poignée de porte la plus éloignée de toi",
+        "Va remplir ton verre en marchant plus lentement que d'habitude",
+        "Trouve un objet jaune et va le toucher",
+        "Va à la fenêtre la plus lointaine et compte 3 nuages ou 3 voitures",
+        "Fais un aller-retour jusqu'à la porte en comptant tes pas",
+        "Va regarder de près la plante la plus proche",
+        "Prends l'escalier pour n'importe quelle raison",
+        "Va lire une affiche ou un post-it que tu n'as jamais lu",
+        "Va dire merci à quelqu'un pour quelque chose de récent"
+    )
+
+    /** Remplace {N} par la durée de travail dans la question "Amélioration". */
+    fun formatQuestion(raw: String, workDurationMin: Int): String =
+        raw.replace("{N}", workDurationMin.toString())
+}
