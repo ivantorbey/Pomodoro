@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 
@@ -30,9 +29,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
     useLibrary("wear-sdk")
     buildFeatures {
         compose = true
@@ -60,6 +56,7 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(libs.watchface.complications.data.source.ktx)
+    implementation(libs.wear)
     implementation(libs.wear.ongoing)
     implementation(libs.wear.tooling.preview)
     testImplementation(libs.junit)

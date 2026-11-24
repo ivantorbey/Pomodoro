@@ -1,16 +1,12 @@
 package com.ivantorbey.pomodoro.watch.presentation
 
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material3.Button
-import androidx.wear.compose.material3.Checkbox
+import androidx.wear.compose.material3.CheckboxButton
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
@@ -57,7 +53,6 @@ fun BreakScreen(
     val remainingMs = if (isBreakDone) 0L else maxOf(0L, state.endTimeMs - now)
     val minutes = remainingMs / 60_000L
     val seconds = (remainingMs % 60_000L) / 1_000L
-
     val listState = rememberScalingLazyListState()
 
     Box(
@@ -68,27 +63,23 @@ fun BreakScreen(
         ScalingLazyColumn(
             state = listState,
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // En-tête : titre + compte à rebours
             item {
                 ListHeader {
-                    if (isAmbient) {
-                        Text(
-                            text = if (isBreakDone) "Pause ✓" else "%02d".format(minutes),
-                            style = MaterialTheme.typography.titleSmall,
-                            textAlign = TextAlign.Center
-                        )
-                    } else {
-                        val headerText = if (isBreakDone) "Pause terminée"
-                            else "Pause, lève-toi · %02d:%02d".format(minutes, seconds)
-                        Text(
-                            text = headerText,
-                            style = MaterialTheme.typography.titleSmall,
-                            textAlign = TextAlign.Center
-                        )
+                    val headerText = when {
+                        isAmbient && isBreakDone -> "Pause ✓"
+                        isAmbient -> "%02d".format(minutes)
+                        isBreakDone -> "Pause terminée"
+                        else -> "Pause, lève-toi · %02d:%02d".format(minutes, seconds)
                     }
+                    Text(
+                        text = headerText,
+                        style = MaterialTheme.typography.titleSmall,
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
 
@@ -96,15 +87,22 @@ fun BreakScreen(
                 // Tirage question
                 if (state.drawnQuestion >= 0) {
                     item {
-                        CheckItem(
-                            emoji = "🧠",
-                            label = "Question",
-                            text = PomodoroContent.formatQuestion(
-                                PomodoroContent.QUESTIONS[state.drawnQuestion],
-                                state.workDurationMin
-                            ),
+                        CheckboxButton(
                             checked = state.checkedMask and 1 != 0,
-                            onToggle = { onToggleCheck(0) }
+                            onCheckedChange = { onToggleCheck(0) },
+                            label = {
+                                Text("🧠 Question", style = MaterialTheme.typography.labelSmall)
+                            },
+                            secondaryLabel = {
+                                Text(
+                                    PomodoroContent.formatQuestion(
+                                        PomodoroContent.QUESTIONS[state.drawnQuestion],
+                                        state.workDurationMin
+                                    ),
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            },
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
@@ -112,12 +110,19 @@ fun BreakScreen(
                 // Tirage action
                 if (state.drawnAction >= 0) {
                     item {
-                        CheckItem(
-                            emoji = "🧘",
-                            label = "Action",
-                            text = PomodoroContent.ACTIONS[state.drawnAction],
+                        CheckboxButton(
                             checked = state.checkedMask and 2 != 0,
-                            onToggle = { onToggleCheck(1) }
+                            onCheckedChange = { onToggleCheck(1) },
+                            label = {
+                                Text("🧘 Action", style = MaterialTheme.typography.labelSmall)
+                            },
+                            secondaryLabel = {
+                                Text(
+                                    PomodoroContent.ACTIONS[state.drawnAction],
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            },
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
@@ -125,12 +130,19 @@ fun BreakScreen(
                 // Tirage lever
                 if (state.drawnLever >= 0) {
                     item {
-                        CheckItem(
-                            emoji = "🚶",
-                            label = "Lève-toi",
-                            text = PomodoroContent.LEVER[state.drawnLever],
+                        CheckboxButton(
                             checked = state.checkedMask and 4 != 0,
-                            onToggle = { onToggleCheck(2) }
+                            onCheckedChange = { onToggleCheck(2) },
+                            label = {
+                                Text("🚶 Lève-toi", style = MaterialTheme.typography.labelSmall)
+                            },
+                            secondaryLabel = {
+                                Text(
+                                    PomodoroContent.LEVER[state.drawnLever],
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            },
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
@@ -160,40 +172,6 @@ fun BreakScreen(
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun CheckItem(
-    emoji: String,
-    label: String,
-    text: String,
-    checked: Boolean,
-    onToggle: () -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        verticalAlignment = Alignment.Top,
-        horizontalArrangement = Arrangement.spacedBy(6.dp)
-    ) {
-        Checkbox(
-            checked = checked,
-            onCheckedChange = { onToggle() },
-            modifier = Modifier.size(24.dp)
-        )
-        androidx.compose.foundation.layout.Column {
-            Text(
-                text = "$emoji $label",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodySmall
-            )
         }
     }
 }

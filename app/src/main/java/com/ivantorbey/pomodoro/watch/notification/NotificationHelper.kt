@@ -5,10 +5,8 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
+import android.graphics.drawable.Icon
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.IconCompat
 import androidx.wear.ongoing.OngoingActivity
 import androidx.wear.ongoing.Status
 import com.ivantorbey.pomodoro.watch.R
@@ -44,7 +42,8 @@ object NotificationHelper {
 
         val title = when (state.phase) {
             Phase.WORK -> context.getString(R.string.notif_title_work)
-            Phase.BREAK, Phase.BREAK_DONE -> context.getString(R.string.notif_title_break)
+            Phase.BREAK -> context.getString(R.string.notif_title_break)
+            Phase.BREAK_DONE -> context.getString(R.string.notif_title_break_done)
             Phase.IDLE -> return
         }
 
@@ -56,19 +55,11 @@ object NotificationHelper {
             .setContentIntent(openIntent)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
-        val icon = IconCompat.createWithResource(context, R.drawable.ic_tomato)
-        val ongoingStatus = if (state.endTimeMs > 0) {
-            Status.Builder()
-                .addTemplate(Status.StopwatchTemplateSegment.at(state.endTimeMs))
-                .build()
-        } else {
-            Status.Builder().addTemplate("Pomodoro").build()
-        }
+        val status = Status.Builder().addTemplate(title).build()
 
         val ongoingActivity = OngoingActivity.Builder(context, NOTIF_ID_ONGOING, builder)
-            .setStaticIcon(icon)
-            .setTouchIntent(openIntent)
-            .setStatus(ongoingStatus)
+            .setStaticIcon(R.drawable.ic_tomato)
+            .setStatus(status)
             .build()
         ongoingActivity.apply(context)
 
@@ -78,23 +69,15 @@ object NotificationHelper {
     /** Notification plein écran pour réveil à la transition vers BREAK. */
     fun showBreakStartNotification(context: Context, state: SessionState) {
         ensureChannel(context)
-        // Met à jour l'ongoing notification pour la pause...
         showOngoingNotification(context, state)
-        // ...et envoie une notification plein écran pour allumer l'écran.
-        showFullScreenNotification(
-            context,
-            context.getString(R.string.notif_title_break)
-        )
+        showFullScreenNotification(context, context.getString(R.string.notif_title_break))
     }
 
     /** Notification plein écran pour réveil à la fin de la pause. */
     fun showBreakDoneNotification(context: Context, state: SessionState) {
         ensureChannel(context)
         showOngoingNotification(context, state)
-        showFullScreenNotification(
-            context,
-            context.getString(R.string.notif_title_break_done)
-        )
+        showFullScreenNotification(context, context.getString(R.string.notif_title_break_done))
     }
 
     fun cancelAll(context: Context) {
@@ -121,9 +104,7 @@ object NotificationHelper {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
         return PendingIntent.getActivity(
-            context,
-            0,
-            intent,
+            context, 0, intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
     }

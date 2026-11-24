@@ -1,7 +1,6 @@
 package com.ivantorbey.pomodoro.watch.tile
 
 import android.content.Context
-import android.content.Intent
 import androidx.wear.protolayout.ActionBuilders
 import androidx.wear.protolayout.ResourceBuilders
 import androidx.wear.protolayout.TimelineBuilders
@@ -19,7 +18,6 @@ import androidx.wear.tiles.RequestBuilders.ResourcesRequest
 import androidx.wear.tiles.tooling.preview.Preview
 import androidx.wear.tiles.tooling.preview.TilePreviewData
 import androidx.wear.tooling.preview.devices.WearDevices
-import com.ivantorbey.pomodoro.watch.R
 import com.ivantorbey.pomodoro.watch.data.Phase
 import com.ivantorbey.pomodoro.watch.data.SessionState
 import com.ivantorbey.pomodoro.watch.data.readSessionState
@@ -56,37 +54,12 @@ private fun buildTile(
     val remainingMs = maxOf(0L, state.endTimeMs - now)
     val remainingMin = remainingMs / 60_000L
 
-    val (mainLine, subLine, buttonLabel) = when (state.phase) {
-        Phase.IDLE -> Triple(
-            "🍅 ${state.workDurationMin} min",
-            "Pomodoro",
-            "Démarrer"
-        )
-        Phase.WORK -> Triple(
-            "%02d min".format(remainingMin),
-            "Travail",
-            "Pause maintenant"
-        )
-        Phase.BREAK -> Triple(
-            "%02d min".format(remainingMin),
-            "Pause",
-            null
-        )
-        Phase.BREAK_DONE -> Triple(
-            "Pause ✓",
-            "Prêt à reprendre",
-            null
-        )
+    val (mainLine, titleLine) = when (state.phase) {
+        Phase.IDLE -> "🍅 ${state.workDurationMin} min" to "Pomodoro"
+        Phase.WORK -> "%02d min".format(remainingMin) to "Travail"
+        Phase.BREAK -> "%02d min".format(remainingMin) to "Pause"
+        Phase.BREAK_DONE -> "Pause ✓" to "Prêt à reprendre"
     }
-
-    val openIntent = ActionBuilders.LaunchAction.Builder()
-        .setAndroidActivity(
-            ActionBuilders.AndroidActivity.Builder()
-                .setPackageName(context.packageName)
-                .setClassName(MainActivity::class.java.name)
-                .build()
-        )
-        .build()
 
     return TileBuilders.Tile.Builder()
         .setResourcesVersion(RESOURCES_VERSION)
@@ -100,8 +73,8 @@ private fun buildTile(
                                 typography = Typography.DISPLAY_SMALL
                             )
                         },
-                        labelSlot = {
-                            text(subLine.layoutString, typography = Typography.LABEL_SMALL)
+                        titleSlot = {
+                            text(titleLine.layoutString, typography = Typography.LABEL_SMALL)
                         }
                     )
                 }

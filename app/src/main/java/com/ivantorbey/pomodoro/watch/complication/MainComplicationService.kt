@@ -2,6 +2,7 @@ package com.ivantorbey.pomodoro.watch.complication
 
 import android.app.PendingIntent
 import android.content.Intent
+import android.graphics.drawable.Icon
 import androidx.wear.watchface.complications.data.ComplicationData
 import androidx.wear.watchface.complications.data.ComplicationType
 import androidx.wear.watchface.complications.data.LongTextComplicationData
@@ -15,7 +16,6 @@ import androidx.wear.watchface.complications.data.SmallImageComplicationData
 import androidx.wear.watchface.complications.data.SmallImageType
 import androidx.wear.watchface.complications.datasource.ComplicationRequest
 import androidx.wear.watchface.complications.datasource.SuspendingComplicationDataSourceService
-import androidx.core.graphics.drawable.IconCompat
 import com.ivantorbey.pomodoro.watch.R
 import com.ivantorbey.pomodoro.watch.data.Phase
 import com.ivantorbey.pomodoro.watch.data.SessionState
@@ -40,7 +40,7 @@ class MainComplicationService : SuspendingComplicationDataSourceService() {
         val tap = if (preview) null else openPendingIntent()
         val now = System.currentTimeMillis()
         val remainingMs = maxOf(0L, state.endTimeMs - now)
-        val remainingMin = (remainingMs / 60_000L).toInt().coerceAtLeast(0)
+        val remainingMin = (remainingMs / 60_000L).toInt()
         val totalMin = state.effectiveWorkDurationMin()
 
         val shortText = when (state.phase) {
@@ -65,24 +65,20 @@ class MainComplicationService : SuspendingComplicationDataSourceService() {
         val plainShort = PlainComplicationText.Builder(shortText).build()
         val plainLong = PlainComplicationText.Builder(longText).build()
         val plainDesc = PlainComplicationText.Builder("Pomodoro").build()
-        val icon = MonochromaticImage.Builder(
-            IconCompat.createWithResource(applicationContext, R.drawable.ic_tomato)
-        ).build()
-        val smallImage = SmallImage.Builder(
-            IconCompat.createWithResource(applicationContext, R.drawable.ic_tomato),
-            SmallImageType.ICON
-        ).build()
+        val nativeIcon = Icon.createWithResource(applicationContext, R.drawable.ic_tomato)
+        val monoImage = MonochromaticImage.Builder(nativeIcon).build()
+        val smallImage = SmallImage.Builder(nativeIcon, SmallImageType.ICON).build()
 
         return when (type) {
             ComplicationType.SHORT_TEXT ->
                 ShortTextComplicationData.Builder(plainShort, plainDesc)
-                    .setMonochromaticImage(icon)
+                    .setMonochromaticImage(monoImage)
                     .apply { tap?.let { setTapAction(it) } }
                     .build()
 
             ComplicationType.LONG_TEXT ->
                 LongTextComplicationData.Builder(plainLong, plainDesc)
-                    .setMonochromaticImage(icon)
+                    .setMonochromaticImage(monoImage)
                     .apply { tap?.let { setTapAction(it) } }
                     .build()
 
@@ -94,12 +90,12 @@ class MainComplicationService : SuspendingComplicationDataSourceService() {
                     contentDescription = plainDesc
                 )
                     .setText(plainShort)
-                    .setMonochromaticImage(icon)
+                    .setMonochromaticImage(monoImage)
                     .apply { tap?.let { setTapAction(it) } }
                     .build()
 
             ComplicationType.MONOCHROMATIC_IMAGE ->
-                MonochromaticImageComplicationData.Builder(icon, plainDesc)
+                MonochromaticImageComplicationData.Builder(monoImage, plainDesc)
                     .apply { tap?.let { setTapAction(it) } }
                     .build()
 
